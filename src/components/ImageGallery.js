@@ -2,9 +2,9 @@ import ImageGalleryItem from './ImageGalleryItem'
 import '../styles.css';
 
 
-const ImageGallery = () => {
+const ImageGallery = ({onClick}) => {
     return (
-        <ul className="ImageGallery">
+        <ul className="ImageGallery" onClick={onClick}>
             <ImageGalleryItem />
         </ul>
     )

@@ -24,17 +24,15 @@ class App extends Component {
     const {showModal} = this.state
     return (
       <div className='App'>
-        <Button text='Open' onClick={this.togleModal}/>
         <Searchbar 
         text='Search' 
         onSubmit={this.onSubmit} />
         <Loader />
         <Button text='Load more...' />
-        <ImageGallery />
+        <ImageGallery onClick={this.togleModal}/>
 
         {showModal && <Modal onClose={this.togleModal}>
           <img src="" alt=""/>
-          <p>fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff</p>
         </Modal>}
         
       </div>
