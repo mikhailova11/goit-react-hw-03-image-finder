@@ -3,7 +3,7 @@ import '../styles.css';
 
 
 const ImageGallery = ({onClick, hits, activeIdx}) => {
-    console.log(onClick)
+    
     return (
         <ul className="ImageGallery" >
             <ImageGalleryItem 
