@@ -5,8 +5,9 @@ import Button from './Button';
 import ImageGallery from './ImageGallery';
 import Modal from './Modal';
 import "../styles.css"
-import { ToastContainer} from 'react-toastify';
+import { ToastContainer, toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import fetchImages from "../api/fetchImage";
 
 
 class App extends PureComponent {
@@ -22,54 +23,49 @@ class App extends PureComponent {
   }
 //componentDidUpdate всегда делается через  проверку if... так как может зациклиться
    componentDidUpdate(prevProps, prevState) {
-    const {value, page, hits} = this.state
-    
-    const API_KEY =  '24874837-d0558540b09f2ee4305703a66';
-    const BASE_URL = 'https://pixabay.com/api/';
 
-    
+    const {value, page} = this.state
 
-    if(prevState.value !== value ||
-      prevState.page !== this.state.page){
+    if(prevState.value !== value){
 
       this.setState({page: 1,
-        status: 'pending'});
+        status: 'resolve'});
+        this.fetchImage()
+        
+      } else if(prevState.value === value && prevState.page !== page){
+        this.setState({status: 'resolve'});
+      this.fetchImage()
+    }
+  }
+  
 
-         fetch(`${BASE_URL}?key=${API_KEY}&q=${value}&page=${page}&image_type=photo&orientation=horizontal&per_page=12`)
-         .then(
-          (response) => {
-            if (!response.ok) {
-              throw new Error(response.status);
-            }
-            return response.json();
-          }
-        )
-        .then (hits => 
-          this.setState({
-          hits: hits.hits,
-          status: 'resolve',
-        })
+  async fetchImage  () {
+    const { page, value } = this.state
 
-        )
-        .then (()=>{
-          if (page > 1) {
+    try {
+      const hits = await fetchImages(value, page)
+     
+      console.log(hits.hits)
+
+          if (page === 1) {
+            return this.setState({hits: hits.hits})
+            
+          } else if (page > 1) {
             this.setState(prevState => ({
-              hits: [ ...hits, ...prevState.hits],
+              hits: [...prevState.hits, ...hits.hits],
             }))
             window.scrollTo({
               top: document.documentElement.scrollHeight,
               behavior: 'smooth',
             });
-          }}
-        )
-
-      .catch (error => 
-        this.setState({error: error.message})
-      )
+          }
+      
+        } catch (error) {
+          toast.error('Unexpected error. Try again.');
+          this.setState({ error,
+            status: 'idle' });
+        } 
     }
-
-
-  }
   
 
   togleModal = () => {
@@ -77,14 +73,14 @@ class App extends PureComponent {
       showModal: !showModal,
       status: 'resolve',
     }))
-  }
+  };
   handleFormSubmit = (value) => {
     this.setState({value})
-  }
+  };
   activeIdx = (activeIndex) =>{
     this.setState({activeIndex,
       status: 'pending'}) 
-  }
+  };
   handleClickLoadMore = () => {
     this.setState(prevState => ({ page: prevState.page + 1 }));
     console.log ('click')
