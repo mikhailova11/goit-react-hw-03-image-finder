@@ -24,7 +24,15 @@ class App extends PureComponent {
 //componentDidUpdate всегда делается через  проверку if... так как может зациклиться
    componentDidUpdate(prevProps, prevState) {
 
-    const {value, page} = this.state
+    const {value, page, hits} = this.state
+    
+    if (hits.length === 0){
+      this.setState({
+        status: 'idle'});
+    } else {
+      this.setState({
+        status: 'resolve'});
+    }
 
     if(prevState.value !== value){
 
